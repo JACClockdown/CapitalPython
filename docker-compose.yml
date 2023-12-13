@@ -1,0 +1,34 @@
+# docker-compose.yml
+version: "3.8"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi-application
+    command: uvicorn main:app --host 0.0.0.0 --reload
+    working_dir: /code
+    volumes:
+      - ./:/code
+    environment:
+      PORT: 8000
+      DEBUG: 1
+      DATABASE_URL: postgresql://fastapi_traefik:fastapi_traefik@db:5432/fastapi_traefik
+    ports:
+      - '8000:8000'
+    restart: on-failure
+
+  db:
+    image: postgres:15-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    expose:
+      - 5432
+    environment:
+      - POSTGRES_USER=fastapi_traefik
+      - POSTGRES_PASSWORD=fastapi_traefik
+      - POSTGRES_DB=fastapi_traefik
+
+volumes:
+  postgres_data:
