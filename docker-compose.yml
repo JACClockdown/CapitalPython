@@ -19,6 +19,17 @@ services:
       - '8000:8000'
     restart: on-failure
 
+  redis-cache:
+    image: redis:alpine
+    hostname: redis-cache
+    container_name: redis-cache
+    restart: on-failure
+    ports:
+      - '6379:6379'
+    command: redis-server
+    volumes:
+      - cache:/data
+
   db:
     image: postgres:15-alpine
     volumes:
@@ -32,3 +43,7 @@ services:
 
 volumes:
   postgres_data:
+
+  cache:
+    driver: local
+
